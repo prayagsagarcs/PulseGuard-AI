@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PulseGuard AI – Know your heart numbers</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🫀</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f1ea;--card:#fffdfa;--ink:#10303a;--mute:#5d737a;--line:#ddd4c6;--ac:#0b6477;--soft:#dcecee;--red:#d62f4a;--ok:#1b8a5a;--warn:#c98100;--g1:#f3c9c9;--g2:#f9e3e3;--tr:#1a1a1a;--side:#0a3a45;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+@media(prefers-color-scheme:dark){:root{--bg:#0d1a1f;--card:#14262d;--ink:#e5f0f2;--mute:#92aab1;--line:#264049;--ac:#5cc8dc;--soft:#183841;--red:#ff7088;--ok:#58d6a0;--warn:#f0b740;--g1:#2a4048;--g2:#1b2f36;--tr:#7dffb5;--side:#08181d}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.55 "Atkinson Hyperlegible",system-ui,sans-serif}
+h1,h2,h3{font-family:"Familjen Grotesk","Trebuchet MS",sans-serif;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.btn{border:0;cursor:pointer;background:var(--ac);color:#fff;padding:10px 18px;border-radius:99px;font-weight:700}
+@media(prefers-color-scheme:dark){.btn{color:#04141a}}
+.btn.g{background:transparent;color:var(--ink);border:1.5px solid var(--line)}.btn.s{padding:4px 12px;font-size:13px}
+.auth{display:grid;grid-template-columns:1.05fr 1fr;min-height:100vh}
+@media(max-width:860px){.auth{grid-template-columns:1fr}.brand{display:none}}
+.brand{background:var(--side);color:#e6f3f5;padding:48px;display:flex;flex-direction:column;justify-content:space-between}
+.brand h1{font-size:clamp(40px,5vw,68px);line-height:1;max-width:12ch}.brand p{max-width:44ch;opacity:.85;font-size:17px}
+.brand svg{width:100%;max-width:440px}
+.logo{font:700 24px "Familjen Grotesk",sans-serif}
+.formside{display:grid;place-items:center;padding:28px 18px}.fc{width:100%;max-width:500px}
+.tabs{display:flex;background:var(--soft);border-radius:99px;padding:4px;margin:16px 0}
+.tabs button{flex:1;border:0;background:none;padding:9px;border-radius:99px;cursor:pointer;font-weight:700;color:var(--mute)}
+.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 4px #0002}
+label{display:block;font-size:13.5px;font-weight:700;margin:12px 0 4px}
+input[type=text],input[type=email],input[type=tel],input[type=password],input[type=number],input[type=date],input[type=datetime-local],select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--card)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.chk{display:flex;flex-wrap:wrap;gap:7px}
+.chk label{margin:0;font-weight:400;display:inline-flex;gap:6px;align-items:center;border:1.5px solid var(--line);border-radius:99px;padding:5px 12px;cursor:pointer;background:var(--card)}
+.chk label:has(input:checked){background:var(--soft);border-color:var(--ac)}.chk input{accent-color:var(--ac)}
+.err{color:var(--red);font-size:13.5px;min-height:18px;margin-top:8px}.hint{color:var(--mute);font-size:13px}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+@media(max-width:860px){.app{grid-template-columns:1fr}}
+.side{background:var(--side);color:#d9ecef;padding:22px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+@media(max-width:860px){.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center}}
+.side .logo{color:#fff;margin-bottom:14px}
+.nav{border:0;background:none;text-align:left;padding:10px 14px;border-radius:99px;cursor:pointer;font-weight:700;color:#a8cbd1}
+.nav.on{background:#ffffff1f;color:#fff}
+.me{margin-top:auto;border-top:1px solid #ffffff22;padding-top:12px;font-size:13px}.me .hint{color:#9fc2c9}
+.main{padding:28px clamp(16px,3vw,40px);max-width:1120px;width:100%}
+.main h2{font-size:36px}.sub{color:var(--mute);margin:2px 0 20px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-bottom:18px}
+.k{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.k span{color:var(--mute);font-size:13.5px}.k b{display:block;font:700 30px/1.15 "Familjen Grotesk",sans-serif;font-variant-numeric:tabular-nums}.k small{color:var(--mute)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:18px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}th{font-size:13px;color:var(--mute)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.pill{border-radius:99px;padding:2px 11px;font-size:13px;font-weight:700;white-space:nowrap}
+.p-ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}.p-w{background:color-mix(in srgb,var(--warn) 22%,transparent);color:var(--warn)}.p-b{background:color-mix(in srgb,var(--red) 18%,transparent);color:var(--red)}.p-n{background:var(--soft);color:var(--mute)}
+.empty{padding:28px;text-align:center;color:var(--mute)}
+.note{background:color-mix(in srgb,var(--warn) 15%,transparent);border-radius:12px;padding:12px 16px;font-size:14px;margin-bottom:18px}
+canvas{width:100%;height:220px;border-radius:10px;border:1px solid var(--line);display:block}
+.tap{width:100%;padding:40px;font-size:22px;border-radius:20px}
+code{background:var(--soft);padding:1px 6px;border-radius:5px;font-size:13px}
+ul.fl{margin:6px 0 0;padding-left:20px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const NS="pg:",$=id=>document.getElementById(id);
+const L=k=>{try{return JSON.parse(localStorage.getItem(NS+k))}catch(e){return null}},S=(k,v)=>{try{localStorage.setItem(NS+k,JSON.stringify(v))}catch(e){alert("Browser storage is full or blocked, so this was not saved.")}};
+const H=async(p,s)=>{try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){let h=5381;for(const c of s+p)h=(h*33)^c.charCodeAt(0);return String(h>>>0)}};
+const COND=["High blood pressure","Heart disease","Thyroid disorder","Asthma / COPD","Sleep apnoea","None of these"];
+let view="home",authTab="login",step=1,draft={},err="",ecg=null,taps=[],simKey="nsr";
+const me=()=>L("session"),users=()=>L("users")||{},U=()=>users()[me()];
+function saveU(u){const us=users();us[u.email]=u;S("users",us)}
+// ---------- health maths ----------
+const age=d=>{const b=new Date(d),n=new Date();let a=n.getFullYear()-b.getFullYear();if(n<new Date(n.getFullYear(),b.getMonth(),b.getDate()))a--;return a};
+const bmiCat=b=>b<18.5?["w","Underweight"]:b<23?["ok","Healthy"]:b<25?["w","Overweight risk"]:b<30?["b","Overweight"]:["b","Obese"];
+function bp(s,d){if(s>180||d>120)return["b","Hypertensive crisis range: seek urgent care"];if(s>=140||d>=90)return["b","Stage 2 hypertension range"];if(s>=130||d>=80)return["w","Stage 1 hypertension range"];if(s>=120)return["w","Elevated"];return["ok","Normal"]}
+function vitals(u){const a=age(u.dob),h=u.height/100,bmi=u.weight/(h*h),lo=18.5*h*h,hi=22.9*h*h,bsa=Math.sqrt(u.height*u.weight/3600),mhr=220-a,tan=208-.7*a,out={a,bmi,lo,hi,bsa,mhr,tan};
+ if(u.sys&&u.dia){out.map=u.dia+(u.sys-u.dia)/3;out.pp=u.sys-u.dia;out.bp=bp(u.sys,u.dia)}
+ const rf=[];if(u.smoker=="yes")rf.push("Smoking");if(u.diabetic=="yes")rf.push("Diabetes");if(u.conds.includes("High blood pressure")||(u.sys&&bp(u.sys,u.dia)[0]!="ok"&&bp(u.sys,u.dia)[0]!="w"))rf.push("High blood pressure");if(bmi>=25)rf.push(`BMI ${bmi.toFixed(1)} (25 or above)`);if(u.famHx=="yes")rf.push("Family history of early heart disease");if(u.activity=="low")rf.push("Low physical activity");if(a>=(u.sex=="male"?45:55))rf.push(`Age ${a}`);if(u.conds.includes("Heart disease"))rf.push("Known heart disease");out.rf=rf;
+ out.zones=[[50,60,"Very light"],[60,70,"Light"],[70,80,"Moderate"],[80,90,"Hard"],[90,100,"Maximum"]].map(z=>{const f=p=>u.rest?Math.round(u.rest+(mhr-u.rest)*p/100):Math.round(mhr*p/100);return{n:z[2],lo:f(z[0]),hi:f(z[1]),pc:`${z[0]}–${z[1]}%`}});return out}
+// ---------- ECG ----------
+const FS_DEF=250;
+function parseECG(text,fsIn){const rows=text.split(/\r?\n/).map(l=>l.trim().split(/[,;\s\t]+/).map(Number).filter(v=>!isNaN(v))).filter(r=>r.length);if(rows.length<500)return{err:"Need at least 500 samples (about 2 seconds)."};
+ let fs=fsIn,x;if(rows[0].length>=2){const t=rows.map(r=>r[0]);let inc=true;for(let i=1;i<Math.min(200,t.length);i++)if(t[i]<=t[i-1])inc=false;if(inc){const dt=(t[Math.min(199,t.length-1)]-t[0])/Math.min(199,t.length-1);if(dt>0){fs=Math.round(1/(dt>5?dt/1000:dt))}x=rows.map(r=>r[1])}else x=rows.map(r=>r[0])}else x=rows.map(r=>r[0]);
+ return{x,fs}}
+function analyseECG(x0,fs){const n=x0.length,w=Math.max(3,Math.round(fs*.6)),cs=[0];for(let i=0;i<n;i++)cs.push(cs[i]+x0[i]);
+ let x=x0.map((v,i)=>{const a=Math.max(0,i-(w>>1)),b=Math.min(n,i+(w>>1)+1);return v-(cs[b]-cs[a])/(b-a)});
+ const sw=Math.max(1,Math.round(fs*.012));x=x.map((v,i)=>{let s=0,c=0;for(let k=Math.max(0,i-sw);k<=Math.min(n-1,i+sw);k++){s+=x[k];c++}return s/c});
+ const mx=Math.max(...x),mn=Math.min(...x);if(-mn>mx)x=x.map(v=>-v);
+ const sorted=[...x].sort((a,b)=>a-b),p99=sorted[Math.floor(n*.995)],th=p99*.5,pk=[],ref=Math.round(fs*.3);
+ for(let i=2;i<n-2;i++)if(x[i]>th&&x[i]>=x[i-1]&&x[i]>=x[i+1]){if(pk.length&&i-pk[pk.length-1]<ref){if(x[i]>x[pk[pk.length-1]])pk[pk.length-1]=i}else pk.push(i)}
+ const rr=pk.slice(1).map((p,i)=>(p-pk[i])/fs).filter(v=>v>.25&&v<2.2);const secs=n/fs;
+ const wide=pk.filter(p=>{let c=0;for(let i=Math.max(0,p-Math.round(fs*.15));i<=Math.min(n-1,p+Math.round(fs*.15));i++)if(x[i]>x[p]*.5)c++;return c/fs>.1}).length;
+ if(rr.length<6)return{x,pk,fs,secs,bad:"Fewer than 7 clean beats were found. Use a longer, cleaner recording (at least 10 seconds)."};
+ const mean=rr.reduce((a,b)=>a+b,0)/rr.length,sd=Math.sqrt(rr.reduce((a,b)=>a+(b-mean)**2,0)/(rr.length-1)),d=rr.slice(1).map((v,i)=>v-rr[i]),rm=Math.sqrt(d.reduce((a,b)=>a+b*b,0)/d.length)*1000,pn=d.filter(v=>Math.abs(v)>.05).length/d.length*100;
+ const med=[...rr].sort((a,b)=>a-b)[rr.length>>1],mf=rr.filter(v=>Math.abs(v-med)<med*.12).length/rr.length,cv=sd/mean,hr=60/mean;
+ let early=0;for(let i=0;i<rr.length-1;i++)if(rr[i]<med*.8&&rr[i+1]>med*1.15)early++;
+ const notes=[];
+ if(cv>.12&&mf<.6)notes.push(["b","Irregularly irregular beat spacing. This pattern can occur in atrial fibrillation. Please have it checked by a clinician."]);
+ else if(early>=1||wide/pk.length>.08)notes.push(["w",`${early} early beat${early==1?"":"s"} followed by a pause${wide?` and ${wide} wide beat${wide==1?"":"s"}`:""}. Occasional ectopic beats are common but worth mentioning to a clinician.`]);
+ else notes.push(["ok","Beat spacing is regular."]);
+ notes.push(hr<50?["w",`Average rate ${hr.toFixed(0)} bpm is slow. This can be normal in athletes.`]:hr>100?["w",`Average rate ${hr.toFixed(0)} bpm is above 100 at rest.`]:["ok",`Average rate ${hr.toFixed(0)} bpm is within 60–100 (50–59 can be normal for fit people).`]);
+ return{x,pk,fs,secs,hr,sdnn:sd*1000,rmssd:rm,pnn50:pn,cv,mf,beats:pk.length,early,wide,notes}}
+function simulate(key,fs=FS_DEF,secs=20){let s=7;const r=()=>(s=(s*16807)%2147483647)/2147483647,g=(t,m,sg,a)=>a*Math.exp(-((t-m)**2)/(2*sg*sg)),N=fs*secs,sig=new Array(N).fill(0);let t=.6,c=0;
+ const bt=(t,wd,p)=>(p?g(t,-.16,.025,.12):0)+(wd?g(t,0,.05,1.1)-g(t,.1,.06,.6)+g(t,.28,.06,-.35):g(t,-.025,.01,-.12)+g(t,0,.012,1)+g(t,.03,.01,-.2)+g(t,.26,.045,.28));
+ while(t<secs){let rr,wd=0,p=1;if(key=="nsr")rr=.83+(r()-.5)*.05;else if(key=="tachy")rr=.46+(r()-.5)*.03;else if(key=="afib"){rr=.42+r()*.7;p=0}else{c++;rr=.84+(r()-.5)*.04;if(c%4==3)rr=.55;if(c%4==0){wd=1;p=0;rr=1.12}}
+  for(let i=Math.max(0,Math.floor((t-.5)*fs));i<Math.min(N,Math.floor((t+.7)*fs));i++)sig[i]+=bt(i/fs-t,wd,p);t+=rr}
+ return sig.map((v,i)=>v+(key=="afib"?.04*Math.sin(i*.35):0)+.05*Math.sin(i/fs*6.283*.25)+.03*(r()-.5))}
+function drawECG(){const cv=$("cv");if(!cv||!ecg||!ecg.x)return;const dpr=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;cv.width=w*dpr;cv.height=h*dpr;const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n);
+ const secs=Math.min(10,ecg.secs),win=Math.floor(secs*ecg.fs),box=h/5;c.strokeStyle=css("--g2");for(let x=0;x<w;x+=box/5){c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke()}for(let y=0;y<h;y+=box/5){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()}
+ c.strokeStyle=css("--g1");c.lineWidth=1.3;for(let x=0;x<w;x+=box){c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke()}for(let y=0;y<h;y+=box){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()}
+ const seg=ecg.x.slice(0,win),m=Math.max(...seg),n=Math.min(...seg),sc=h*.78/(m-n||1);c.strokeStyle=css("--tr");c.lineWidth=1.6;c.beginPath();seg.forEach((v,i)=>{const X=i/win*w,Y=h*.89-(v-n)*sc;i?c.lineTo(X,Y):c.moveTo(X,Y)});c.stroke();
+ c.fillStyle=css("--red");ecg.pk.filter(p=>p<win).forEach(p=>{c.beginPath();c.arc(p/win*w,Math.max(10,h*.89-(ecg.x[p]-n)*sc-9),4,0,7);c.fill()})}
+// ---------- views ----------
+function authView(){const login=authTab=="login";
+ return `<div class=auth><section class=brand><div class=logo>PulseGuard AI</div><div><h1>Your heart numbers, calculated for you.</h1><p style="margin-top:16px">Enter your body measurements once. PulseGuard works out your BMI, heart-rate zones, blood-pressure category and risk factors, then tracks every reading you add.</p></div><svg viewBox="0 0 440 90" aria-hidden=true><polyline fill=none stroke="#7dffb5" stroke-width=3 stroke-linejoin=round points="0,50 70,50 85,50 95,44 105,50 130,50 140,56 150,6 160,84 172,50 200,50 225,38 250,50 330,50 345,50 355,44 365,50 390,50 400,56 410,6 420,84 432,50 440,50"/></svg></section>
+ <section class=formside><div class=fc><h2 style="font-size:34px">${login?"Welcome back":"Create your health profile"}</h2><p class=hint>${login?"Log in to see your dashboard.":"Step "+step+" of 2 · "+(step==1?"Your details":"Your body and health")}</p>
+ <div class=tabs><button class="${login?"on":""}" data-a="tab:login">Log in</button><button class="${login?"":"on"}" data-a="tab:signup">Sign up</button></div>
+ <form id=af novalidate>${login?`<label for=em>Email</label><input id=em type=email autocomplete=email><label for=pw>Password</label><input id=pw type=password autocomplete=current-password>`:step==1?
+ `<label for=nm>Full name</label><input id=nm type=text value="${draft.name||""}"><label for=em>Email</label><input id=em type=email value="${draft.email||""}"><label for=ph>Phone</label><input id=ph type=tel placeholder="10-digit number" value="${draft.phone||""}"><label for=pw>Password</label><input id=pw type=password placeholder="At least 8 characters">`:
+ `<div class=two><div><label for=dob>Date of birth</label><input id=dob type=date></div><div><label for=sx>Sex at birth</label><select id=sx><option value=female>Female</option><option value=male>Male</option></select></div></div><div class=two><div><label for=ht>Height (cm)</label><input id=ht type=number min=100 max=230></div><div><label for=wt>Weight (kg)</label><input id=wt type=number min=25 max=300 step=0.1></div></div>
+ <div class=three><div><label for=rp>Resting pulse <span class=hint>(optional)</span></label><input id=rp type=number min=30 max=130></div><div><label for=sy>Usual systolic BP <span class=hint>(optional)</span></label><input id=sy type=number min=70 max=250></div><div><label for=di>Usual diastolic BP <span class=hint>(optional)</span></label><input id=di type=number min=40 max=150></div></div>
+ <div class=three><div><label for=ac>Activity</label><select id=ac><option value=low>Mostly seated</option><option value=moderate selected>Moderate</option><option value=high>Very active</option></select></div><div><label for=sm>Smoker?</label><select id=sm><option value=no>No</option><option value=yes>Yes</option></select></div><div><label for=db>Diabetes?</label><select id=db><option value=no>No</option><option value=yes>Yes</option></select></div></div>
+ <label for=fh>Parent or sibling with heart disease before 60?</label><select id=fh><option value=no>No</option><option value=yes>Yes</option></select><label>Conditions</label><div class=chk>${COND.map(c=>`<label><input type=checkbox name=cd value="${c}">${c}</label>`).join("")}</div>`}
+ <div class=err id=er role=alert>${err}</div><div style="display:flex;gap:8px;margin-top:6px">${!login&&step==2?`<button type=button class="btn g" data-a="back">Back</button>`:""}<button class=btn style="flex:1">${login?"Log in":step==1?"Continue":"Create account"}</button></div></form></div></section></div>`}
+function shell(b){const u=U(),nav=[["home","Overview"],["log","Readings log"],["pulse","Pulse check"],["ecg","ECG analysis"],["profile","My profile"]];
+ return `<div class=app><aside class=side><div class=logo>PulseGuard AI</div>${nav.map(n=>`<button class="nav ${view==n[0]?"on":""}" data-a="nav:${n[0]}">${n[1]}</button>`).join("")}<div class=me><b>${u.name}</b><br><span class=hint>${u.email}</span><br><button class="btn g s" style="margin-top:8px;color:#fff;border-color:#ffffff44" data-a="logout">Log out</button></div></aside><main class=main><div class=note><b>Information, not diagnosis.</b> PulseGuard is not a medical device. Discuss results with a doctor, and call emergency services for chest pain, fainting or severe breathlessness.</div>${b}</main></div>`}
+function home(){const u=U(),v=vitals(u),bc=bmiCat(v.bmi);
+ return shell(`<h2>Hello, ${u.name.split(" ")[0]}</h2><p class=sub>Everything below is calculated from the measurements in your profile.</p>
+ <div class=kpis><div class=k><span>BMI</span><b>${v.bmi.toFixed(1)}</b><small><span class="pill p-${bc[0]}">${bc[1]}</span></small></div><div class=k><span>Healthy weight for your height</span><b style="font-size:24px">${v.lo.toFixed(0)}–${v.hi.toFixed(0)} kg</b><small>BMI 18.5–22.9 · ${u.weight<v.lo?`${(v.lo-u.weight).toFixed(1)} kg below`:u.weight>v.hi?`${(u.weight-v.hi).toFixed(1)} kg above`:"you are within range"}</small></div><div class=k><span>Max heart rate</span><b>${v.mhr} bpm</b><small>220 − ${v.a} · Tanaka: ${v.tan.toFixed(0)}</small></div><div class=k><span>Body surface area</span><b>${v.bsa.toFixed(2)} m²</b><small>√(cm × kg ÷ 3600)</small></div>
+ ${v.bp?`<div class=k><span>Usual BP</span><b>${u.sys}/${u.dia}</b><small><span class="pill p-${v.bp[0]}">${v.bp[1]}</span></small></div><div class=k><span>Mean arterial pressure</span><b>${v.map.toFixed(0)} mmHg</b><small>dia + (sys − dia) ÷ 3 · pulse pressure ${v.pp}</small></div>`:""}</div>
+ <div class=card><h3 style="margin-bottom:8px">Heart-rate training zones</h3><p class=hint>${u.rest?`Karvonen method using your resting pulse of ${u.rest} bpm: resting + (max − resting) × intensity.`:"Percent of max heart rate. Add your resting pulse in My profile for a personalised version."}</p><div class=tw><table><thead><tr><th>Zone</th><th>Intensity</th><th class=n>From</th><th class=n>To</th></tr></thead><tbody>${v.zones.map(z=>`<tr><td>${z.n}</td><td>${z.pc}</td><td class=n>${z.lo} bpm</td><td class=n>${z.hi} bpm</td></tr>`).join("")}</tbody></table></div></div>
+ <div class=card><h3>Risk factors from your profile</h3>${v.rf.length?`<p>${v.rf.length} factor${v.rf.length>1?"s":""} noted. These raise the value of regular blood-pressure and pulse tracking.</p><ul class=fl>${v.rf.map(r=>`<li>${r}</li>`).join("")}</ul>`:`<p>None of the factors this app tracks apply to you based on your profile.</p>`}<p class=hint style="margin-top:8px">This is a checklist, not a risk score. A doctor uses cholesterol and other tests for a proper estimate.</p></div>`)}
+function log(){const u=U(),R0=[...u.readings].sort((a,b)=>a.ts-b.ts),R=R0.filter(r=>r.sys),last7=R.slice(-7),p7=R0.slice(-7);
+ const avg=k=>last7.reduce((a,r)=>a+r[k],0)/last7.length,avgP=p7.reduce((a,r)=>a+r.pulse,0)/p7.length;const now=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);
+ let chart="";if(R.length>=2){const W=640,Ht=210,xs=i=>44+i*(W-64)/(R.length-1),mx=Math.max(160,...R.map(r=>r.sys)),mn=40,ys=v=>Ht-26-(v-mn)*(Ht-46)/(mx-mn);
+  chart=`<svg viewBox="0 0 ${W} ${Ht}" style="width:100%" role=img aria-label="Blood pressure trend"><rect x=44 y=${ys(130)} width=${W-64} height=${ys(90)-ys(130)} fill="var(--ok)" opacity=.1/>${[60,80,100,120,140,160].map(v=>`<line x1=44 x2=${W-20} y1=${ys(v)} y2=${ys(v)} stroke="var(--line)"/><text x=38 y=${ys(v)+4} text-anchor=end font-size=11 fill="var(--mute)">${v}</text>`).join("")}<polyline fill=none stroke="var(--red)" stroke-width=3 points="${R.map((r,i)=>xs(i)+","+ys(r.sys)).join(" ")}"/><polyline fill=none stroke="var(--ac)" stroke-width=3 points="${R.map((r,i)=>xs(i)+","+ys(r.dia)).join(" ")}"/>${R.map((r,i)=>`<circle cx=${xs(i)} cy=${ys(r.sys)} r=3.5 fill="var(--red)"/><circle cx=${xs(i)} cy=${ys(r.dia)} r=3.5 fill="var(--ac)"/>`).join("")}<text x=${W-20} y=14 text-anchor=end font-size=12 fill="var(--red)">Systolic</text><text x=${W-20} y=28 text-anchor=end font-size=12 fill="var(--ac)">Diastolic</text></svg>`}
+ return shell(`<h2>Readings log</h2><p class=sub>Add readings from your own cuff or pulse measurements. Categories follow the 2017 ACC/AHA blood-pressure guideline.</p>
+ <div class=card><form id=rf><div class=three><div><label for=rt>Date and time</label><input id=rt type=datetime-local value="${now}"></div><div><label for=rs>Systolic</label><input id=rs type=number min=60 max=260></div><div><label for=rd>Diastolic</label><input id=rd type=number min=30 max=160></div></div><div class=two><div><label for=rpu>Pulse (bpm)</label><input id=rpu type=number min=30 max=220></div><div><label for=rw>Weight (kg, optional)</label><input id=rw type=number min=25 max=300 step=0.1></div></div><div class=err id=er></div><button class=btn style="margin-top:8px">Add reading</button></form></div>
+ ${R0.length?`<div class=kpis>${R.length?`<div class=k><span>BP average of last ${last7.length}</span><b>${avg("sys").toFixed(0)}/${avg("dia").toFixed(0)}</b><small><span class="pill p-${bp(avg("sys"),avg("dia"))[0]}">${bp(avg("sys"),avg("dia"))[1]}</span></small></div>`:""}<div class=k><span>Average pulse (last ${p7.length})</span><b>${avgP.toFixed(0)} bpm</b></div><div class=k><span>Entries</span><b>${R0.length}</b></div></div>${chart?`<div class=card>${chart}<p class=hint>Green band marks 90–130 mmHg for reference.</p></div>`:""}
+ <div class=card><div class=tw><table><thead><tr><th>When</th><th class=n>BP</th><th class=n>Pulse</th><th class=n>MAP</th><th>Category</th><th></th></tr></thead><tbody>${[...R0].reverse().map(r=>{const c=r.sys?bp(r.sys,r.dia):null;return `<tr><td>${new Date(r.ts).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short"})}</td><td class=n>${r.sys?r.sys+"/"+r.dia:"–"}</td><td class=n>${r.pulse}</td><td class=n>${r.sys?(r.dia+(r.sys-r.dia)/3).toFixed(0):"–"}</td><td>${c?`<span class="pill p-${c[0]}">${c[1]}</span>`:`<span class="pill p-n">Pulse only</span>`}</td><td><button class="btn g s" data-a="del:${r.ts}">Delete</button></td></tr>`}).join("")}</tbody></table></div></div>`:`<div class="card empty">No readings yet. Add your first one above to see averages and trends.</div>`}`)}
+function pulse(){return shell(`<h2>Pulse check</h2><p class=sub>Find your pulse on your wrist or neck. Tap the button with every beat you feel, at least 10 times. Rate is worked out from the gaps between taps.</p><div class=card><button class="btn tap" id=tp data-a="tap" aria-label="Tap for each heartbeat">Tap with each beat</button><div id=tapout style="margin-top:14px">${tapOut()}</div></div>`)}
+function tapOut(){if(taps.length<2)return `<p class=hint>${taps.length?"Keep tapping…":"Waiting for your first tap."}</p>`;const iv=taps.slice(1).map((t,i)=>(t-taps[i])/1000).filter(v=>v>.3&&v<2);if(iv.length<1)return `<p class=hint>Taps are too far apart or too fast. Reset and try again.</p>`;
+ const med=[...iv].sort((a,b)=>a-b)[iv.length>>1],mean=iv.reduce((a,b)=>a+b,0)/iv.length,sd=Math.sqrt(iv.reduce((a,b)=>a+(b-mean)**2,0)/iv.length),bpm=60/med,cv=sd/mean;
+ const u=U(),ready=taps.length>=11,cls=bpm<60?["w","Below 60"]:bpm>100?["w","Above 100"]:["ok","Within 60–100"];
+ return `<div class=kpis><div class=k><span>Pulse</span><b>${bpm.toFixed(0)} bpm</b><small>60 ÷ median gap (${med.toFixed(2)} s)</small></div><div class=k><span>Beats counted</span><b>${taps.length}</b><small>${ready?"enough for a reading":"need 11+ taps"}</small></div><div class=k><span>Regularity</span><b>${(cv*100).toFixed(0)}%</b><small>${cv>.15?"Gaps vary a lot. Tap steadily and retry":"Steady"}</small></div></div><p><span class="pill p-${cls[0]}">${cls[1]}</span> ${u.rest?`Your usual resting pulse is ${u.rest} bpm.`:""}</p>${ready?`<button class=btn data-a="savetap:${Math.round(bpm)}">Save to readings log</button> `:""}<button class="btn g" data-a="resettap">Reset</button>`}
+function ecgView(){const u=U(),e=ecg,v=vitals(u);
+ return shell(`<h2>ECG analysis</h2><p class=sub>Upload a single-lead ECG as a text or CSV file with one sample per line, or time,value columns. The app filters the signal, finds each beat and measures the spacing.</p>
+ <div class=card><div class=two><div><label for=fs>Sampling rate (Hz)</label><input id=fs type=number value=${e?.fsIn||FS_DEF} min=50 max=2000></div><div><label>ECG file</label><label class="btn g" style="display:block;text-align:center;cursor:pointer;margin:0">Choose file<input id=ef type=file accept=".csv,.txt,.dat" hidden></label></div></div>
+ <div class=err id=er>${e?.err||""}</div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px"><span class=hint>No file? Generate a clearly labelled <b>simulated</b> strip:</span><select id=sk style="width:auto">${[["nsr","Normal sinus"],["afib","Atrial fibrillation"],["pvc","Early ventricular beats"],["tachy","Fast sinus"]].map(a=>`<option value=${a[0]} ${a[0]==simKey?"selected":""}>${a[1]}</option>`).join("")}</select><button class="btn g s" data-a="sim">Simulate</button></div></div>
+ ${e&&e.x?`<div class=card><h3 style="margin-bottom:6px">${e.label} · ${e.secs.toFixed(1)} s at ${e.fs} Hz</h3><canvas id=cv role=img aria-label="ECG trace with detected beats"></canvas><p class=hint>Red dots mark detected R-peaks. First ${Math.min(10,e.secs).toFixed(0)} seconds shown. Grid: 1 large box = 0.2 s.</p></div>
+ ${e.bad?`<div class="note">${e.bad}</div>`:`<div class=kpis><div class=k><span>Average rate</span><b>${e.hr.toFixed(0)} bpm</b><small>${e.hr>v.mhr?"Above your max "+v.mhr:"Max for your age: "+v.mhr}</small></div><div class=k><span>Beats found</span><b>${e.beats}</b></div><div class=k><span>SDNN</span><b>${e.sdnn.toFixed(0)} ms</b><small>spread of beat intervals</small></div><div class=k><span>RMSSD</span><b>${e.rmssd.toFixed(0)} ms</b><small>beat-to-beat change</small></div><div class=k><span>pNN50</span><b>${e.pnn50.toFixed(0)}%</b><small>gaps differing by &gt; 50 ms</small></div></div>
+ <div class=card><h3>Screening notes</h3><ul class=fl>${e.notes.map(n=>`<li><span class="pill p-${n[0]}">${n[0]=="ok"?"Fine":n[0]=="w"?"Note":"Flag"}</span> ${n[1]}</li>`).join("")}</ul><p class=hint style="margin-top:10px">Rules used: irregular if interval variation (SD ÷ mean = ${(e.cv*100).toFixed(0)}%) exceeds 12% and fewer than 60% of intervals sit near the median (${(e.mf*100).toFixed(0)}% do). Simulated strips can’t reflect real recording noise.</p><button class=btn style="margin-top:8px" data-a="saveecg">Save to history</button></div>`}`:`<div class="card empty">No ECG loaded. Choose a file or run a simulation.</div>`}
+ ${u.ecgs.length?`<div class=card><h3 style="margin-bottom:8px">Saved analyses</h3><div class=tw><table><thead><tr><th>When</th><th>Source</th><th class=n>Rate</th><th class=n>RMSSD</th><th>Result</th></tr></thead><tbody>${[...u.ecgs].reverse().map(x=>`<tr><td>${new Date(x.ts).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short"})}</td><td>${x.label}</td><td class=n>${x.hr.toFixed(0)} bpm</td><td class=n>${x.rmssd.toFixed(0)} ms</td><td><span class="pill p-${x.top[0]}">${x.top[0]=="ok"?"Regular":x.top[0]=="b"?"Irregular flag":"Note"}</span></td></tr>`).join("")}</tbody></table></div></div>`:""}`)}
+function prof(){const u=U();return shell(`<h2>My profile</h2><p class=sub>Update these and every calculation refreshes.</p><div class=card><form id=pfm><div class=two><div><label>Name</label><input type=text id=nm value="${u.name}"></div><div><label>Phone</label><input type=tel id=ph value="${u.phone}"></div><div><label>Email</label><input type=email value="${u.email}" disabled></div><div><label>Date of birth</label><input type=date id=dob value="${u.dob}"></div><div><label>Height (cm)</label><input type=number id=ht value="${u.height}"></div><div><label>Weight (kg)</label><input type=number id=wt step=0.1 value="${u.weight}"></div><div><label>Resting pulse</label><input type=number id=rp value="${u.rest||""}"></div><div><label>Activity</label><select id=ac>${["low","moderate","high"].map(a=>`<option ${a==u.activity?"selected":""}>${a}</option>`).join("")}</select></div><div><label>Usual systolic</label><input type=number id=sy value="${u.sys||""}"></div><div><label>Usual diastolic</label><input type=number id=di value="${u.dia||""}"></div><div><label>Smoker</label><select id=sm>${["no","yes"].map(a=>`<option ${a==u.smoker?"selected":""}>${a}</option>`).join("")}</select></div><div><label>Diabetes</label><select id=db>${["no","yes"].map(a=>`<option ${a==u.diabetic?"selected":""}>${a}</option>`).join("")}</select></div></div><label>Conditions</label><div class=chk>${COND.map(c=>`<label><input type=checkbox name=cd value="${c}" ${u.conds.includes(c)?"checked":""}>${c}</label>`).join("")}</div><div class=err id=er></div><button class=btn style="margin-top:10px">Save changes</button></form></div>`)}
+function render(){const r=$("root");if(!me()||!U()){r.innerHTML=authView();bind();return}r.innerHTML=({home,log,pulse,ecg:ecgView,profile:prof})[view]();bind();if(view=="ecg")drawECG()}
+const checked=n=>[...document.querySelectorAll(`input[name=${n}]:checked`)].map(i=>i.value);
+function readBody(){const g=id=>$(id).value,n=id=>g(id)===""?null:+g(id);return{dob:g("dob"),sex:$("sx")?g("sx"):undefined,height:n("ht"),weight:n("wt"),rest:n("rp"),sys:n("sy"),dia:n("di"),activity:g("ac"),smoker:g("sm"),diabetic:g("db"),famHx:$("fh")?g("fh"):undefined,conds:checked("cd")}}
+function checkBody(b){if(!b.dob||isNaN(new Date(b.dob))||age(b.dob)<5||age(b.dob)>110)return"Enter a valid date of birth.";if(!(b.height>=100&&b.height<=230))return"Height must be between 100 and 230 cm.";if(!(b.weight>=25&&b.weight<=300))return"Weight must be between 25 and 300 kg.";if(b.rest!=null&&!(b.rest>=30&&b.rest<=130))return"Resting pulse must be between 30 and 130.";if((b.sys==null)!=(b.dia==null))return"Enter both systolic and diastolic, or leave both blank.";if(b.sys!=null&&!(b.sys>b.dia&&b.sys<=250&&b.dia>=40))return"Systolic must be higher than diastolic (diastolic at least 40).";return""}
+function bind(){
+ const af=$("af");if(af)af.onsubmit=async e=>{e.preventDefault();err="";
+  if(authTab=="login"){const em=$("em").value.trim().toLowerCase(),u=users()[em];if(!u||u.h!==await H($("pw").value,u.salt)){err="Email or password is incorrect.";return render()}S("session",em);view="home";return render()}
+  if(step==1){const d={name:$("nm").value.trim(),email:$("em").value.trim().toLowerCase(),phone:$("ph").value.replace(/\D/g,""),pw:$("pw").value};
+   if(d.name.length<2)err="Enter your full name.";else if(!/^\S+@\S+\.\S+$/.test(d.email))err="Enter a valid email address.";else if(d.phone.length<10)err="Phone number needs at least 10 digits.";else if(users()[d.email])err="An account with this email already exists. Log in instead.";else if(d.pw.length<8)err="Password needs at least 8 characters.";
+   draft={...draft,...d};if(err)return render();step=2;return render()}
+  const b=readBody();err=checkBody(b);if(err)return render();
+  const salt=[...crypto.getRandomValues(new Uint8Array(8))].join("");
+  saveU({name:draft.name,email:draft.email,phone:draft.phone,salt,h:await H(draft.pw,salt),...b,readings:[],ecgs:[]});S("session",draft.email);draft={};step=1;view="home";render()};
+ const pfm=$("pfm");if(pfm)pfm.onsubmit=e=>{e.preventDefault();const b=readBody(),m=checkBody(b);if(m){$("er").textContent=m;return}const u=U();Object.assign(u,b,{name:$("nm").value.trim()||u.name,phone:$("ph").value.replace(/\D/g,"")});saveU(u);view="home";render()};
+ const rf=$("rf");if(rf)rf.onsubmit=e=>{e.preventDefault();const s=+$("rs").value,d=+$("rd").value,p=+$("rpu").value,ts=new Date($("rt").value).getTime(),w=$("rw").value;
+  if(!ts||!(s>=60&&s<=260)||!(d>=30&&d<=160)||!(p>=30&&p<=220)){$("er").textContent="Enter date, systolic (60–260), diastolic (30–160) and pulse (30–220).";return}if(s<=d){$("er").textContent="Systolic must be higher than diastolic.";return}
+  const u=U();u.readings.push({ts,sys:s,dia:d,pulse:p});if(w){u.weight=+w}saveU(u);render()};
+ const ef=$("ef");if(ef)ef.onchange=async()=>{const f=ef.files[0];if(!f)return;const fsIn=+$("fs").value||FS_DEF,t=await f.text(),p=parseECG(t,fsIn);if(p.err){ecg={err:p.err,fsIn};return render()}ecg={...analyseECG(p.x,p.fs),label:f.name,fsIn:p.fs};render()};
+ const sk=$("sk");if(sk)sk.onchange=()=>simKey=sk.value}
+document.addEventListener("click",e=>{const a=e.target.closest("[data-a]")?.dataset.a;if(!a)return;const[k,v]=a.split(":");const u=me()?U():null;
+ if(k=="tab"){authTab=v;step=1;err="";render()}else if(k=="back"){step=1;render()}else if(k=="nav"){view=v;render()}else if(k=="logout"){S("session",null);authTab="login";render()}
+ else if(k=="del"){u.readings=u.readings.filter(r=>r.ts!=+v);saveU(u);render()}
+ else if(k=="tap"){const now=Date.now();if(taps.length&&now-taps[taps.length-1]>2500)taps=[];taps.push(now);$("tapout").innerHTML=tapOut()}
+ else if(k=="resettap"){taps=[];$("tapout").innerHTML=tapOut()}
+ else if(k=="savetap"){u.readings.push({ts:Date.now(),sys:null,dia:null,pulse:+v});saveU(u);taps=[];view="log";render()}
+ else if(k=="sim"){simKey=$("sk").value;const x=simulate(simKey);ecg={...analyseECG(x,FS_DEF),label:"Simulated: "+$("sk").selectedOptions[0].text,fsIn:FS_DEF};render()}
+ else if(k=="saveecg"&&ecg&&ecg.notes){u.ecgs.push({ts:Date.now(),label:ecg.label,hr:ecg.hr,rmssd:ecg.rmssd,top:ecg.notes[0]});saveU(u);render()}});
+render();
+</script>
+</body>
+</html>
